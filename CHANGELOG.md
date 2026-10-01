@@ -4,8 +4,12 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added
+- Step-by-step Windows guide for first-time users (`docs/windows-guide.md`).
+
 ### Fixed
 - Images that cannot be read now say why (missing file or unreadable format) and print the cause to stderr instead of always reporting "not found".
+- Errors are shown in a dialog when launched without a console (`pyw`, `md2textbook-gui`), also when a file is passed in.
 
 ## [0.1.2] - 2026-10-01
 

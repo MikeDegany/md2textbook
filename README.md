@@ -15,6 +15,8 @@ pipx install md2textbook      # recommended: isolated, global command
 pip install md2textbook
 ```
 
+New to terminals? Follow the [step-by-step Windows guide](docs/windows-guide.md).
+
 Requires Python 3.10 or newer. Poppins and Caladea fonts are bundled; nothing else to download.
 
 On Linux the file chooser needs Tk (`sudo apt install python3-tk` on Debian/Ubuntu, `sudo dnf install python3-tkinter` on Fedora). Without it the tool falls back to `zenity`/`kdialog`, or to a prompt in the terminal. Passing the file on the command line never needs any of these.

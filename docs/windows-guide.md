@@ -50,6 +50,8 @@ This gives you an icon to double-click, so you never need the terminal again.
 4. Click **Next**.
 5. Name it `Markdown to PDF`, then click **Finish**.
 
+If Windows says it cannot find the item in step 3, open PowerShell, run `where pyw`, and use the path it prints followed by ` -m md2textbook` (for example `C:\Users\YourName\AppData\Local\Programs\Python\Launcher\pyw.exe -m md2textbook`).
+
 ## Part 4: Convert a file
 
 **Option A: choose the file**
@@ -76,6 +78,7 @@ python -m pip install --upgrade md2textbook
 | What you see | What to do |
 |---|---|
 | `'python' is not recognized as an internal or external command` | Python was installed without the PATH box ticked. Run the Python installer again, choose **Modify**, then **Next**, tick **Add Python to environment variables**, and click **Install**. Then close and reopen PowerShell. |
+| The Microsoft Store opens when you type `python` | Python is not installed yet, or the PATH box was not ticked. Repeat Part 1, then reopen PowerShell. |
 | Double-clicking the icon does nothing | Open PowerShell and run `python -m md2textbook`. If you see an error, send it to us in an issue. |
 | A box says "Conversion failed" | Your file may use something unsupported. Send the message (and, if you can, the file) in an issue. |
 | Part of an equation shows as plain text | md2textbook supports most LaTeX, but not matrices or custom macros. See "Limitations" in the README. |
