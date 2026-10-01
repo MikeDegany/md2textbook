@@ -98,8 +98,7 @@ def test_manual_heading_numbers_are_stripped(tmp_path):
     src = tmp_path / "doc.md"
     src.write_text("# Book\n\n# 3. Dates\n\n## 3.1 Detail\n\n## 2) Other\n\n# Second\n", encoding="utf-8")
     titles = outline_titles(convert(src, tmp_path / "doc.pdf"))
-    assert titles[0].endswith("Dates") and "3." not in titles[0]
-    assert all("3.1 Detail" not in t and "2)" not in t for t in titles)
+    assert "2  Dates" in titles and "2.1  Detail" in titles and "2.2  Other" in titles
 
 
 def test_emoji_use_fallback_font():
