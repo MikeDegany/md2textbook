@@ -8,6 +8,8 @@ All notable changes to this project are documented here. The format follows [Kee
 - Step-by-step Windows guide for first-time users (`docs/windows-guide.md`).
 
 ### Fixed
+- Links to headings such as `[text](#my-heading)` no longer crash the conversion; they jump to the heading, and links to unknown headings become plain text.
+- Headings inside callout boxes no longer shift heading numbering and anchors.
 - Images that cannot be read now say why (missing file or unreadable format) and print the cause to stderr instead of always reporting "not found".
 - Errors are shown in a dialog when launched without a console (`pyw`, `md2textbook-gui`), also when a file is passed in.
 

@@ -71,3 +71,18 @@ def test_missing_and_corrupt_images_do_not_abort(tmp_path, capsys):
     assert convert(src, tmp_path / "doc.pdf").exists()
     err = capsys.readouterr().err
     assert "missing.png (not found)" in err and "bad.png (unreadable" in err
+
+
+def test_internal_links_resolve_or_degrade(tmp_path):
+    src = tmp_path / "doc.md"
+    src.write_text(
+        "# Title\n\n# 1 — Names: CoRL\n\n## Part\n\n"
+        "See [names](#1--names-corl), [part](#part) and [gone](#no-such-heading).\n\n"
+        "> [!NOTE]\n> ## Heading inside a box\n> text\n\n# Second\n",
+        encoding="utf-8",
+    )
+    out = convert(src, tmp_path / "doc.pdf")
+    import pymupdf
+
+    kinds = [link["kind"] for page in pymupdf.open(out) for link in page.get_links()]
+    assert kinds.count(pymupdf.LINK_GOTO) >= 2  # the two resolvable links, plus TOC entries

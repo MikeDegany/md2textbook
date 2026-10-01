@@ -176,7 +176,7 @@ class Book:
         self._want_toc = True
         return self
 
-    def _heading(self, level: int, title: str, number: str, style_name: str) -> Heading:
+    def _heading(self, level: int, title: str, number: str, style_name: str, slug: str = "") -> Heading:
         level = min(level, self._last_level + 1)
         self._last_level = level
         self._headings += 1
@@ -184,10 +184,10 @@ class Book:
         style = self.S[style_name]
         prefix = f'<font color="#4F46E5">{number}</font>&nbsp;&nbsp;' if number else ""
         heading = Heading(prefix + inline(title, style.fontName, style.fontSize), style)
-        heading.toc = (level, label, f"h{self._headings}")
+        heading.toc = (level, label, f"h{self._headings}", slug)
         return heading
 
-    def chapter(self, title: str, kicker: str | None = None) -> "Book":
+    def chapter(self, title: str, kicker: str | None = None, slug: str = "") -> "Book":
         c = self._counters
         c["ch"] += 1
         c["sec"] = c["sub"] = c["eq"] = c["fig"] = c["lst"] = c["tbl"] = 0
@@ -205,26 +205,26 @@ class Book:
             ("TOPPADDING", (0, 0), (-1, 0), 20), ("BOTTOMPADDING", (0, 0), (-1, 0), 2),
             ("TOPPADDING", (0, 1), (-1, 1), 0), ("BOTTOMPADDING", (0, 1), (-1, 1), 22),
         ]))
-        banner.toc = (0, f"{number}  {plain(title)}", f"h{self._headings}")
+        banner.toc = (0, f"{number}  {plain(title)}", f"h{self._headings}", slug)
         banner.is_chapter = True
         banner.chapter_title = plain(title)
         return self._add(CondPageBreak(FRAME_H - 1), banner)
 
-    def section(self, title: str) -> "Book":
+    def section(self, title: str, slug: str = "") -> "Book":
         c = self._counters
         c["sec"] += 1
         c["sub"] = 0
         number = f"{c['ch']}.{c['sec']}" if c["ch"] else f"{c['sec']}"
-        return self._add(self._heading(1, title, number, "sec"))
+        return self._add(self._heading(1, title, number, "sec", slug))
 
-    def sub(self, title: str) -> "Book":
+    def sub(self, title: str, slug: str = "") -> "Book":
         c = self._counters
         c["sub"] += 1
         base = f"{c['ch']}.{c['sec']}" if c["ch"] else f"{c['sec']}"
-        return self._add(self._heading(2, title, f"{base}.{c['sub']}", "sub"))
+        return self._add(self._heading(2, title, f"{base}.{c['sub']}", "sub", slug))
 
-    def subsub(self, title: str) -> "Book":
-        return self._add(self._heading(3, title, "", "subsub"))
+    def subsub(self, title: str, slug: str = "") -> "Book":
+        return self._add(self._heading(3, title, "", "subsub", slug))
 
     def para(self, text: str, lead: bool = False) -> "Book":
         style = self.S["lead"] if lead else self.S["box_body" if self.depth else "body"]
@@ -495,8 +495,10 @@ class Book:
                     info = getattr(f, "toc", None)
                     if info is None:
                         continue
-                    level, text, key = info
+                    level, text, key, slug = info
                     self.canv.bookmarkPage(key)
+                    if slug:
+                        self.canv.bookmarkPage(theme.anchor_key(slug))
                     self.canv.addOutlineEntry(text, key, level, closed=0)
                     if level < 2:
                         self.notify("TOCEntry", (level, inline(text, "Body", 10), self.page, key))

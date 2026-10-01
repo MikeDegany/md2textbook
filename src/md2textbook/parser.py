@@ -4,6 +4,7 @@ from urllib.parse import unquote
 
 from . import mathkit
 from .builder import Book, today
+from . import theme
 from .theme import box_spec
 
 FENCE = re.compile(r"^\s{0,3}(`{3,}|~{3,})\s*(.*)$")
@@ -247,6 +248,7 @@ class Renderer:
         self.chapter_level = chapter_level
         self.last_out = 0
         self.heading_seen = 0
+        self.slugs: list[str] = []
 
     def render(self, blocks: list[tuple]) -> None:
         b = self.book
@@ -291,23 +293,24 @@ class Renderer:
 
     def heading(self, level: int, text: str) -> None:
         b = self.book
+        if b.depth:
+            b.para(f"**{text}**")
+            return
         index = self.heading_seen
         self.heading_seen += 1
         if index == self.title_heading:
             return
-        if b.depth:
-            b.para(f"**{text}**")
-            return
         out = max(1, min(level - self.chapter_level + 1, self.last_out + 1))
         self.last_out = out
+        slug = self.slugs[index] if index < len(self.slugs) else ""
         if out == 1:
-            b.chapter(text)
+            b.chapter(text, slug=slug)
         elif out == 2:
-            b.section(text)
+            b.section(text, slug=slug)
         elif out == 3:
-            b.sub(text)
+            b.sub(text, slug=slug)
         else:
-            b.subsub(text)
+            b.subsub(text, slug=slug)
 
     def code(self, info: str, source: str) -> None:
         lang, opts = parse_info(info)
@@ -370,5 +373,9 @@ def convert(md_path: Path, pdf_path: Path) -> Path:
     book = Book(pdf_path, re.sub(r"[*_`]", "", title), author)
     book.cover(title, meta.get("subtitle", ""), (author, meta.get("date") or today()))
     book.toc()
-    Renderer(book, md_path.parent, title_idx, chapter_level).render(blocks)
+    renderer = Renderer(book, md_path.parent, title_idx, chapter_level)
+    renderer.slugs = theme.unique_slugs([blk[2] for blk in headings])
+    theme.ANCHORS.clear()
+    theme.ANCHORS.update(renderer.slugs)
+    renderer.render(blocks)
     return Path(book.build())

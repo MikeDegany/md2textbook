@@ -163,6 +163,28 @@ _LINEBREAK = re.compile(r"<br\s*/?>", re.I)
 _PLACEHOLDER = re.compile("\ue000(\\d+)\ue001")
 
 
+ANCHORS: set[str] = set()
+
+
+def slugify(text: str) -> str:
+    return re.sub(r"[^\w\- ]", "", plain(text).lower()).replace(" ", "-")
+
+
+def anchor_key(slug: str) -> str:
+    return f"a-{slug}"
+
+
+def unique_slugs(titles: list[str]) -> list[str]:
+    seen: dict[str, int] = {}
+    slugs = []
+    for title in titles:
+        base = slugify(title)
+        n = seen.get(base, 0)
+        seen[base] = n + 1
+        slugs.append(base if n == 0 else f"{base}-{n}")
+    return slugs
+
+
 def code_span(code: str, size: float = 9.0) -> str:
     body = xml_escape(code).replace(" ", "&nbsp;")
     return f'<font name="Mono" size="{size}" color="{INLINE_CODE}">{body}</font>'
@@ -188,7 +210,15 @@ def inline(text: str, font: str = "Body", size: float = 10.5) -> str:
     text = _MATH.sub(lambda m: keep(inline_math(m.group(1), size)), text)
     text = _LINEBREAK.sub(lambda m: keep("<br/>"), text)
     text = xml_escape(text)
-    text = _LINK.sub(lambda m: f'<link href="{keep(xml_escape(m.group(2)))}" color="{LINK}">{m.group(1)}</link>', text)
+    def link(m: re.Match) -> str:
+        label, target = m.group(1), m.group(2)
+        if target.startswith("#"):
+            if target[1:] not in ANCHORS:
+                return label
+            return f'<link href="#{anchor_key(target[1:])}" color="{LINK}">{label}</link>'
+        return f'<link href="{keep(xml_escape(target))}" color="{LINK}">{label}</link>'
+
+    text = _LINK.sub(link, text)
     text = _BOLD_ITALIC.sub(r"<b><i>\1</i></b>", text)
     text = _BOLD.sub(lambda m: f"<b>{m.group(1) or m.group(2)}</b>", text)
     text = _ITALIC.sub(lambda m: f"<i>{m.group(1) or m.group(2)}</i>", text)
