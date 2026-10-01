@@ -4,8 +4,11 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-10-01
+
 ### Added
 - Step-by-step Windows guide for first-time users (`docs/windows-guide.md`).
+- Issue forms, a pull request template and `CONTRIBUTING.md`.
 
 ### Changed
 - Manual heading numbers such as `3. Dates` or `2.1 Detail` are removed, since chapters and sections are numbered automatically.
