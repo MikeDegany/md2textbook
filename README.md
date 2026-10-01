@@ -73,6 +73,10 @@ pytest
 | `theme.py` | Fonts, palette, paragraph styles, inline markup |
 | `mathkit.py` | LaTeX to PNG rendering with an on-disk cache |
 
+## Contributing
+
+Issues and pull requests are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md).

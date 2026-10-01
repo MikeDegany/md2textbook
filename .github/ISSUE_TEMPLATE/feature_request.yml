@@ -1,0 +1,15 @@
+name: Feature request
+description: Suggest a Markdown construct, box type, or option
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: How should it work?
+      description: Example Markdown and what the PDF should show.

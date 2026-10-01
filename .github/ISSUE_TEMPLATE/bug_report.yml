@@ -1,0 +1,44 @@
+name: Bug report
+description: Something converts wrongly, crashes, or looks broken
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you expected and what you got instead. Screenshots of the PDF help.
+    validations:
+      required: true
+  - type: textarea
+    id: markdown
+    attributes:
+      label: Minimal Markdown that reproduces it
+      description: The smallest input that shows the problem.
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Terminal output
+      description: Anything printed by `md2textbook`, including warnings.
+      render: shell
+  - type: input
+    id: version
+    attributes:
+      label: md2textbook version
+      description: Output of `md2textbook --version`
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options: [Windows, macOS, Linux, Other]
+    validations:
+      required: true
+  - type: input
+    id: python
+    attributes:
+      label: Python version
+      description: Output of `python --version`
