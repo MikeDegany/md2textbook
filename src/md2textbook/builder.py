@@ -1,3 +1,4 @@
+import sys
 from contextlib import contextmanager
 from datetime import date
 from pathlib import Path
@@ -390,10 +391,17 @@ class Book:
         return self._add_kept(parts, len(data) <= 18)
 
     def figure(self, path: str | Path, caption: str = "") -> "Book":
+        path = Path(path)
         try:
+            if not path.is_file():
+                raise FileNotFoundError(f"no such file: {path}")
             px_w, px_h = ImageReader(str(path)).getSize()
-        except Exception:
-            return self.para(f"*[image not found: {Path(path).name}]*")
+        except Exception as exc:
+            reason = "not found" if isinstance(exc, FileNotFoundError) else f"unreadable, {type(exc).__name__}"
+            note = f"[image skipped: {path.name} ({reason})]"
+            print(f"warning: {note} {path}: {' '.join(str(exc).split())}", file=sys.stderr)
+            style = self.S["box_body" if self.depth else "body"]
+            return self._add(Paragraph(f"<i>{xml_escape(note)}</i>", style))
         width = min(self.avail, px_w * 0.75)
         height = width * px_h / px_w
         limit = FRAME_H * 0.62

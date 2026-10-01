@@ -62,3 +62,12 @@ def test_cli_flags(flag, capsys):
     with pytest.raises(SystemExit) as exc:
         main(flag)
     assert exc.value.code == 0
+
+
+def test_missing_and_corrupt_images_do_not_abort(tmp_path, capsys):
+    (tmp_path / "bad.png").write_bytes(b"not an image")
+    src = tmp_path / "doc.md"
+    src.write_text("# T\n\n## S\n\n![a](missing.png)\n\n![b](bad.png)\n", encoding="utf-8")
+    assert convert(src, tmp_path / "doc.pdf").exists()
+    err = capsys.readouterr().err
+    assert "missing.png (not found)" in err and "bad.png (unreadable" in err

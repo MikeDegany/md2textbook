@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+- Images that cannot be read now say why (missing file or unreadable format) and print the cause to stderr instead of always reporting "not found".
+
 ## [0.1.2] - 2026-10-01
 
 ### Added
