@@ -345,12 +345,15 @@ class Renderer:
         self.book.box(kind, title, items, label=label)
 
 
-def plan_headings(blocks: list[tuple]) -> tuple[int | None, int]:
-    levels = [blk[1] for blk in blocks if blk[0] == "heading"]
+def plan_headings(blocks: list[tuple], meta_title: str = "") -> tuple[int | None, int]:
+    headings = [blk for blk in blocks if blk[0] == "heading"]
+    levels = [blk[1] for blk in headings]
     if not levels:
         return None, 1
     top = min(levels)
-    title_idx = 0 if levels[0] == top and levels.count(top) == 1 and len(levels) > 1 else None
+    first_is_title = levels[0] == top and len(levels) > 1 and (
+        levels.count(top) == 1 or (meta_title and headings[0][2].strip().lower() == meta_title.strip().lower()))
+    title_idx = 0 if first_is_title else None
     rest = [lv for k, lv in enumerate(levels) if k != title_idx]
     return title_idx, min(rest) if rest else top
 
@@ -359,7 +362,7 @@ def convert(md_path: Path, pdf_path: Path) -> Path:
     text = md_path.read_text(encoding="utf-8-sig")
     meta, body = parse_front_matter(text)
     blocks = parse_blocks(body.splitlines())
-    title_idx, chapter_level = plan_headings(blocks)
+    title_idx, chapter_level = plan_headings(blocks, meta.get("title", ""))
     headings = [blk for blk in blocks if blk[0] == "heading"]
     title = meta.get("title") or (headings[title_idx][2] if title_idx is not None else None)
     title = title or md_path.stem.replace("_", " ").replace("-", " ").strip().title()

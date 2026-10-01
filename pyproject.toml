@@ -45,6 +45,8 @@ md2textbook-gui = "md2textbook.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/MikeDegany/md2textbook"
+Source = "https://github.com/MikeDegany/md2textbook"
+Changelog = "https://github.com/MikeDegany/md2textbook/blob/main/CHANGELOG.md"
 Issues = "https://github.com/MikeDegany/md2textbook/issues"
 
 [tool.setuptools.dynamic]

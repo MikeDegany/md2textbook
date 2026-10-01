@@ -62,6 +62,15 @@ _SIMPLE = [
     (r"\\argmin", r"\\mathrm{arg\\,min}"),
     (r"\\top(?![a-zA-Z])", r"\\mathrm{T}"),
     (r"\\mathbbm\{", r"\\mathbb{"),
+    (r"\\le(?![a-zA-Z])", r"\\leq"),
+    (r"\\ge(?![a-zA-Z])", r"\\geq"),
+    (r"\\ne(?![a-zA-Z])", r"\\neq"),
+    (r"\\land(?![a-zA-Z])", r"\\wedge"),
+    (r"\\lor(?![a-zA-Z])", r"\\vee"),
+    (r"\\lnot(?![a-zA-Z])", r"\\neg"),
+    (r"\\implies(?![a-zA-Z])", r"\\Rightarrow"),
+    (r"\\iff(?![a-zA-Z])", r"\\Leftrightarrow"),
+    (r"\\dots(?![a-zA-Z])", r"\\ldots"),
 ]
 
 

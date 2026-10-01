@@ -229,21 +229,22 @@ class Book:
         style = self.S["lead"] if lead else self.S["box_body" if self.depth else "body"]
         return self._add(para(text, style))
 
-    def _item_style(self, level: int, ordered: bool) -> ParagraphStyle:
-        key = (level, ordered, bool(self.depth))
+    def _item_style(self, level: int, ordered: bool, symbol: bool = False) -> ParagraphStyle:
+        key = (level, ordered, bool(self.depth), symbol)
         if key not in self._list_styles:
             base = self.S["box_bullet" if self.depth else "bullet"]
             indent = 18 + level * 16 + (4 if ordered else 0)
+            extra = {"bulletFontName": "Sym"} if symbol else {}
             self._list_styles[key] = ParagraphStyle(f"item{key}", parent=base, leftIndent=indent,
-                                                    bulletIndent=indent - (18 if ordered else 12))
+                                                    bulletIndent=indent - (18 if ordered else 12), **extra)
         return self._list_styles[key]
 
     def item(self, text: str, level: int = 0, marker: str | None = None) -> "Book":
         ordered = bool(marker and marker[0].isdigit())
         marker = marker or ("•", "–", "▪")[min(level, 2)]
-        st = self._item_style(level, ordered)
-        font = st.bulletFontName
-        flowable = Paragraph(inline(text, st.fontName, st.fontSize), st, bulletText=theme.wrap_missing_glyphs(marker, font))
+        symbol = ord(marker[0]) not in theme.coverage(self.S["bullet"].bulletFontName)
+        st = self._item_style(level, ordered, symbol)
+        flowable = Paragraph(inline(text, st.fontName, st.fontSize), st, bulletText=marker)
         return self._add(flowable)
 
     def bullets(self, items: list[str]) -> "Book":

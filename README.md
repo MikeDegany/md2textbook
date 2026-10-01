@@ -2,6 +2,11 @@
 
 Turn a Markdown file into a coursebook-style PDF: gradient cover, table of contents, chapter banners, colored boxes, publication-quality equations and syntax-highlighted code. It runs fully offline on Windows, macOS and Linux, with no network access and no AI.
 
+![Cover, chapter opener and equations](https://raw.githubusercontent.com/MikeDegany/md2textbook/main/docs/images/overview-1.png)
+![Code listings, tables, lists, figures and callout boxes](https://raw.githubusercontent.com/MikeDegany/md2textbook/main/docs/images/overview-2.png)
+
+These pages come from [`examples/showcase.md`](https://github.com/MikeDegany/md2textbook/blob/main/examples/showcase.md); the resulting [`showcase.pdf`](https://github.com/MikeDegany/md2textbook/blob/main/examples/showcase.pdf) is in the repo too.
+
 ## Install
 
 ```bash
@@ -24,14 +29,14 @@ md2textbook-gui               # same as no arguments, without a console window o
 python -m md2textbook notes.md
 ```
 
-An example input is in [`examples/sample.md`](examples/sample.md).
+Two example inputs are in [`examples/`](examples): a minimal `sample.md` and the feature tour `showcase.md`.
 
 ## Markdown support
 
 | Markdown | Result |
 |---|---|
 | Front matter `title`, `subtitle`, `author`, `date` | Cover page |
-| A single `# Title`, then `##` / `###` / `####` | Title on the cover; chapters, sections, subsections |
+| A first `# Title` (the only `#`, or equal to the front-matter title), then `##` / `###` / `####` | Title on the cover; chapters, sections, subsections |
 | Several `#` headings | Each `#` is a chapter |
 | `$x^2$` and `$$ ... $$` (or a `math` fence) | Inline math and numbered display equations |
 | Fenced code, ` ```python title="Loss" ` | Highlighted listing with line numbers and wrapping |
@@ -67,6 +72,10 @@ pytest
 | `builder.py` | ReportLab book builder (pages, boxes, code, tables) |
 | `theme.py` | Fonts, palette, paragraph styles, inline markup |
 | `mathkit.py` | LaTeX to PNG rendering with an on-disk cache |
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 

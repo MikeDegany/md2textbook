@@ -4,7 +4,7 @@ import pytest
 
 from md2textbook import convert
 from md2textbook.mathkit import fix, split_lines
-from md2textbook.parser import parse_blocks, parse_front_matter
+from md2textbook.parser import parse_blocks, parse_front_matter, plan_headings
 
 EXAMPLES = Path(__file__).parent.parent / "examples"
 
@@ -30,6 +30,22 @@ def test_sample_converts(tmp_path):
     out = convert(EXAMPLES / "sample.md", tmp_path / "sample.pdf")
     data = out.read_bytes()
     assert data.startswith(b"%PDF") and len(data) > 20_000
+
+
+def test_showcase_converts(tmp_path):
+    out = convert(EXAMPLES / "showcase.md", tmp_path / "showcase.pdf")
+    assert out.stat().st_size > 50_000
+
+
+def test_title_heading_matching_front_matter_is_not_a_chapter():
+    text = "---\ntitle: My Book\n---\n# My Book\n\n# One\n\n## A\n\n# Two\n"
+    blocks = parse_blocks(parse_front_matter(text)[1].splitlines())
+    title_idx, chapter_level = plan_headings(blocks, "My Book")
+    assert title_idx == 0 and chapter_level == 1
+
+
+def test_short_latex_aliases():
+    assert fix(r"a \le b \ge c \left( x \right)") == r"a \leq b \geq c \left( x \right)"
 
 
 def test_degenerate_inputs(tmp_path):
