@@ -150,13 +150,15 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
-    interactive = args.file is None
-    source = pick_file() if interactive else args.file
+    no_console = sys.stderr is None  # pythonw / pyw / gui-script: errors need a dialog
+    interactive = args.file is None or no_console
+    source = args.file or pick_file()
     if source is None:
         return 0
     if not source.is_file():
         message = f"File not found: {source}"
-        print(message, file=sys.stderr)
+        if sys.stderr is not None:
+            print(message, file=sys.stderr)
         if interactive:
             show_error(message)
         return 2
@@ -165,7 +167,8 @@ def main(argv: list[str] | None = None) -> int:
     try:
         convert(source, target)
     except Exception as exc:
-        traceback.print_exc()
+        if sys.stderr is not None:
+            traceback.print_exc()
         if interactive:
             show_error(f"Conversion failed:\n\n{exc}")
         return 1
