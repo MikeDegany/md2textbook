@@ -1,5 +1,7 @@
 import hashlib
+import os
 import re
+import sys
 import tempfile
 from pathlib import Path
 from typing import NamedTuple
@@ -19,12 +21,18 @@ _parser = MathTextParser("agg")
 
 
 def _cache_dir() -> Path:
-    path = Path(__file__).parent / ".cache" / "math"
+    if sys.platform == "win32":
+        root = Path(os.environ.get("LOCALAPPDATA", Path.home() / "AppData" / "Local"))
+    elif sys.platform == "darwin":
+        root = Path.home() / "Library" / "Caches"
+    else:
+        root = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache"))
+    path = root / "md2textbook" / "math"
     try:
         path.mkdir(parents=True, exist_ok=True)
         return path
     except OSError:
-        return Path(tempfile.mkdtemp(prefix="md2pdf-math-"))
+        return Path(tempfile.mkdtemp(prefix="md2textbook-math-"))
 
 
 CACHE = _cache_dir()

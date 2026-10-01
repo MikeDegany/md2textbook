@@ -1,0 +1,48 @@
+from pathlib import Path
+
+import pytest
+
+from md2textbook import convert
+from md2textbook.mathkit import fix, split_lines
+from md2textbook.parser import parse_blocks, parse_front_matter
+
+EXAMPLES = Path(__file__).parent.parent / "examples"
+
+
+def test_front_matter():
+    meta, body = parse_front_matter("---\ntitle: Hello\nauthor: Me\n---\n# Body\n")
+    assert meta == {"title": "Hello", "author": "Me"}
+    assert body.startswith("# Body")
+
+
+def test_block_kinds():
+    text = "# T\n\npara\n\n- a\n- b\n\n| x | y |\n|---|---|\n| 1 | 2 |\n\n```py\nprint(1)\n```\n\n$$a+b$$\n"
+    kinds = [block[0] for block in parse_blocks(text.splitlines())]
+    assert kinds == ["heading", "para", "list", "table", "code", "math"]
+
+
+def test_math_fixups():
+    assert fix(r"\tfrac{1}{2} \big( x \big)") == r"\frac{1}{2} ( x )"
+    assert split_lines("a &= b \\\\ c &= d") == ["a  = b", "c  = d"]
+
+
+def test_sample_converts(tmp_path):
+    out = convert(EXAMPLES / "sample.md", tmp_path / "sample.pdf")
+    data = out.read_bytes()
+    assert data.startswith(b"%PDF") and len(data) > 20_000
+
+
+def test_degenerate_inputs(tmp_path):
+    for name, text in {"empty": "", "plain": "just text", "bad_math": "$$\\nope{x}$$\n\n$\\also{y}$"}.items():
+        src = tmp_path / f"{name}.md"
+        src.write_text(text, encoding="utf-8")
+        assert convert(src, tmp_path / f"{name}.pdf").exists()
+
+
+@pytest.mark.parametrize("flag", [["--version"], ["--help"]])
+def test_cli_flags(flag, capsys):
+    from md2textbook.cli import main
+
+    with pytest.raises(SystemExit) as exc:
+        main(flag)
+    assert exc.value.code == 0

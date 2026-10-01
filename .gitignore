@@ -15,11 +15,9 @@ env/
 .cache/
 *.log
 
-# Downloaded by setup_fonts.py
-fonts/
-
 # Output
 *.pdf
+!tests/**/*.pdf
 
 # Editors and OS
 .idea/

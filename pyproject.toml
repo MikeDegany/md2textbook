@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "md2textbook"
+dynamic = ["version"]
+description = "Convert Markdown into a coursebook-style PDF with colored boxes, equations and highlighted code, fully offline."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT AND OFL-1.1"
+license-files = ["LICENSE", "src/md2textbook/fonts/OFL-*.txt"]
+authors = [{ name = "Mike Degany" }]
+keywords = ["markdown", "pdf", "textbook", "latex", "converter", "reportlab"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Text Processing :: Markup :: Markdown",
+    "Topic :: Printing",
+]
+dependencies = [
+    "reportlab>=4.0",
+    "matplotlib>=3.7",
+    "pygments>=2.15",
+    "pillow>=10.0",
+    "numpy>=1.24",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "build", "twine"]
+
+[project.scripts]
+md2textbook = "md2textbook.cli:main"
+
+[project.gui-scripts]
+md2textbook-gui = "md2textbook.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/MikeDegany/md2textbook"
+Issues = "https://github.com/MikeDegany/md2textbook/issues"
+
+[tool.setuptools.dynamic]
+version = { attr = "md2textbook.__version__" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+md2textbook = ["fonts/*.ttf", "fonts/*.txt"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -15,9 +15,8 @@ from reportlab.platypus import (BaseDocTemplate, CondPageBreak, Flowable, Frame,
                                 NextPageTemplate, PageBreak, PageTemplate, Paragraph, Spacer, Table, TableStyle)
 from reportlab.platypus.tableofcontents import TableOfContents
 
-import mathkit
-import theme
-from theme import (BOXES, INDIGO, INDIGO_DARK, INDIGO_SOFT, INK, MB, ML, MR, MT, MUTED, PAGE_H, PAGE_W, PURPLE, RULE,
+from . import mathkit, theme
+from .theme import (BOXES, INDIGO, INDIGO_DARK, INDIGO_SOFT, INK, MB, ML, MR, MT, MUTED, PAGE_H, PAGE_W, PURPLE, RULE,
                    TEXT_W, ZEBRA, code_span, inline, para, plain, xml_escape)
 
 FRAME_H = PAGE_H - MT - MB
@@ -497,7 +496,7 @@ class Book:
                         self.opener_pages.add(self.page)
 
         doc = Doc(self.path, pagesize=(PAGE_W, PAGE_H), title=self.title, author=self.author,
-                  leftMargin=ML, rightMargin=MR, topMargin=MT, bottomMargin=MB, creator="md2pdf")
+                  leftMargin=ML, rightMargin=MR, topMargin=MT, bottomMargin=MB, creator="md2textbook")
         doc.chapter_name = ""
         doc.opener_pages = set()
         frame = lambda: Frame(ML, MB, TEXT_W, FRAME_H, 0, 0, 0, 0, id="body")

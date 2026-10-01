@@ -11,7 +11,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import Paragraph
 
-import mathkit
+from . import mathkit
 
 PAGE_W, PAGE_H = A4
 ML = MR = 62
@@ -80,36 +80,32 @@ def box_spec(name: str) -> tuple[str, str | None] | None:
 
 
 FONT_DIR = Path(__file__).parent / "fonts"
-WIN_FONTS = Path("C:/Windows/Fonts")
 MPL_FONTS = Path(matplotlib.get_data_path()) / "fonts" / "ttf"
 
 
-def _first_existing(*paths: Path) -> Path | None:
-    return next((p for p in paths if p.exists()), None)
-
-
-def _register(name: str, *candidates: Path) -> None:
-    path = _first_existing(*candidates)
-    if path is None:
-        raise FileNotFoundError(f"no font file found for {name}")
+def _register(name: str, bundled: str, fallback: str) -> None:
+    path = FONT_DIR / bundled
+    if not bundled or not path.exists():
+        path = MPL_FONTS / fallback
     pdfmetrics.registerFont(TTFont(name, str(path)))
 
 
 def register_fonts() -> None:
-    fd, wf, mf = FONT_DIR, WIN_FONTS, MPL_FONTS
-    _register("Head", fd / "Poppins-Regular.ttf", wf / "segoeui.ttf", mf / "DejaVuSans.ttf")
-    _register("HeadL", fd / "Poppins-Light.ttf", wf / "segoeuil.ttf", mf / "DejaVuSans.ttf")
-    _register("HeadM", fd / "Poppins-Medium.ttf", wf / "seguisb.ttf", mf / "DejaVuSans-Bold.ttf")
-    _register("HeadSB", fd / "Poppins-SemiBold.ttf", wf / "seguisb.ttf", mf / "DejaVuSans-Bold.ttf")
-    _register("HeadB", fd / "Poppins-Bold.ttf", wf / "segoeuib.ttf", mf / "DejaVuSans-Bold.ttf")
-    _register("Body", fd / "Caladea-Regular.ttf", wf / "georgia.ttf", mf / "DejaVuSerif.ttf")
-    _register("Body-B", fd / "Caladea-Bold.ttf", wf / "georgiab.ttf", mf / "DejaVuSerif-Bold.ttf")
-    _register("Body-I", fd / "Caladea-Italic.ttf", wf / "georgiai.ttf", mf / "DejaVuSerif-Italic.ttf")
-    _register("Body-BI", fd / "Caladea-BoldItalic.ttf", wf / "georgiaz.ttf", mf / "DejaVuSerif-BoldItalic.ttf")
-    _register("Sym", mf / "DejaVuSans.ttf")
-    _register("Sym-B", mf / "DejaVuSans-Bold.ttf")
-    _register("Mono", mf / "DejaVuSansMono.ttf")
-    _register("Mono-B", mf / "DejaVuSansMono-Bold.ttf")
+    sans, sans_b = "DejaVuSans.ttf", "DejaVuSans-Bold.ttf"
+    serif = {"": "DejaVuSerif.ttf", "-B": "DejaVuSerif-Bold.ttf", "-I": "DejaVuSerif-Italic.ttf",
+             "-BI": "DejaVuSerif-BoldItalic.ttf"}
+    _register("Head", "Poppins-Regular.ttf", sans)
+    _register("HeadL", "Poppins-Light.ttf", sans)
+    _register("HeadM", "Poppins-Medium.ttf", sans_b)
+    _register("HeadSB", "Poppins-SemiBold.ttf", sans_b)
+    _register("HeadB", "Poppins-Bold.ttf", sans_b)
+    for suffix, fallback in serif.items():
+        style = {"": "Regular", "-B": "Bold", "-I": "Italic", "-BI": "BoldItalic"}[suffix]
+        _register(f"Body{suffix}", f"Caladea-{style}.ttf", fallback)
+    _register("Sym", "", sans)
+    _register("Sym-B", "", sans_b)
+    _register("Mono", "", "DejaVuSansMono.ttf")
+    _register("Mono-B", "", "DejaVuSansMono-Bold.ttf")
     reg = pdfmetrics.registerFontFamily
     reg("Body", normal="Body", bold="Body-B", italic="Body-I", boldItalic="Body-BI")
     reg("Sym", normal="Sym", bold="Sym-B", italic="Sym", boldItalic="Sym-B")

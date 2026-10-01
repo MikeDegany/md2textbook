@@ -2,9 +2,9 @@ import re
 from pathlib import Path
 from urllib.parse import unquote
 
-import mathkit
-from build import Book, today
-from theme import box_spec
+from . import mathkit
+from .builder import Book, today
+from .theme import box_spec
 
 FENCE = re.compile(r"^\s{0,3}(`{3,}|~{3,})\s*(.*)$")
 ATX = re.compile(r"^\s{0,3}(#{1,6})\s+(.*?)(?:\s+#+)?\s*$")
