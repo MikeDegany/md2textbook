@@ -35,7 +35,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "build", "twine"]
+dev = ["pytest", "pymupdf", "build", "twine"]
 
 [project.scripts]
 md2textbook = "md2textbook.cli:main"
