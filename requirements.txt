@@ -1,0 +1,4 @@
+reportlab>=4.0
+matplotlib>=3.7
+pygments>=2.15
+pillow>=10.0

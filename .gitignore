@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Generated at runtime
+.cache/
+*.log
+
+# Downloaded by setup_fonts.py
+fonts/
+
+# Output
+*.pdf
+
+# Editors and OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+~$*
+
+# Tooling
+.claude/
