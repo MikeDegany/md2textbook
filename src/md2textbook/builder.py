@@ -357,30 +357,51 @@ class Book:
         parts.append(table)
         return self._add_kept(parts, len(rows) <= 28)
 
+    def _column_widths(self, header: list[str], rows: list[list[str]]) -> list[float]:
+        cols = len(header)
+        pad = 16
+        weights, floors = [], []
+        for i in range(cols):
+            cells = [(header[i], "HeadSB", 8.6)] + [(row[i], "Body", 9.6) for row in rows]
+            texts = [(plain(text), font, size) for text, font, size in cells]
+            weights.append(max(6, min(max(len(t) for t, _, _ in texts), 60)) ** 0.8)
+            longest = max((stringWidth(word, font, size) for t, font, size in texts for word in t.split()), default=0)
+            floors.append(min(longest, self.avail * 0.3) + pad)
+        if sum(floors) >= self.avail:
+            return [self.avail * f / sum(floors) for f in floors]
+        spare = self.avail - sum(floors)
+        return [floor + spare * w / sum(weights) for floor, w in zip(floors, weights)]
+
     def table(self, header: list[str], rows: list[list[str]], aligns: list[str] | None = None,
               caption: str | None = None) -> "Book":
         cols = len(header)
         aligns = (aligns or []) + ["left"] * cols
+        has_header = any(h.strip() for h in header)
         amap = {"left": TA_LEFT, "center": TA_CENTER, "right": TA_RIGHT}
         th = [ParagraphStyle(f"th{i}", parent=self.S["th"], alignment=amap[aligns[i]]) for i in range(cols)]
         td = [ParagraphStyle(f"td{i}", parent=self.S["td"], alignment=amap[aligns[i]]) for i in range(cols)]
-        data = [[para(h, th[i]) for i, h in enumerate(header)]]
-        for row in rows:
-            row = (row + [""] * cols)[:cols]
-            data.append([para(cell, td[i]) for i, cell in enumerate(row)])
-        lengths = [max([len(header[i])] + [len(r[i]) if i < len(r) else 0 for r in rows]) for i in range(cols)]
-        weights = [max(6, min(n, 60)) ** 0.8 for n in lengths]
-        widths = [self.avail * w / sum(weights) for w in weights]
-        table = Table(data, colWidths=widths, repeatRows=1, splitByRow=1, spaceAfter=10, spaceBefore=4)
-        table.setStyle(TableStyle([
-            ("BACKGROUND", (0, 0), (-1, 0), INDIGO_DARK),
-            ("ROWBACKGROUNDS", (0, 1), (-1, -1), [white, ZEBRA]),
-            ("LINEBELOW", (0, 1), (-1, -1), 0.4, RULE),
+        data = [[para(h, th[i]) for i, h in enumerate(header)]] if has_header else []
+        body = [(row + [""] * cols)[:cols] for row in rows]
+        if not has_header and cols > 1:  # key/value table: emphasise the keys
+            body = [[f"**{row[0]}**" if row[0].strip() and "**" not in row[0] else row[0], *row[1:]] for row in body]
+        data += [[para(cell, td[i]) for i, cell in enumerate(row)] for row in body]
+        if not data:
+            return self
+        widths = self._column_widths(header if has_header else [""] * cols, body)
+        table = Table(data, colWidths=widths, repeatRows=1 if has_header else 0, splitByRow=1, spaceAfter=10,
+                      spaceBefore=4)
+        first = 1 if has_header else 0
+        commands = [
+            ("ROWBACKGROUNDS", (0, first), (-1, -1), [white, ZEBRA]),
+            ("LINEBELOW", (0, first), (-1, -1), 0.4, RULE),
             ("BOX", (0, 0), (-1, -1), 0.6, RULE),
-            ("VALIGN", (0, 0), (-1, 0), "MIDDLE"), ("VALIGN", (0, 1), (-1, -1), "TOP"),
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
             ("LEFTPADDING", (0, 0), (-1, -1), 7), ("RIGHTPADDING", (0, 0), (-1, -1), 7),
             ("TOPPADDING", (0, 0), (-1, -1), 4.5), ("BOTTOMPADDING", (0, 0), (-1, -1), 4.5),
-        ]))
+        ]
+        if has_header:
+            commands += [("BACKGROUND", (0, 0), (-1, 0), INDIGO_DARK), ("VALIGN", (0, 0), (-1, 0), "MIDDLE")]
+        table.setStyle(TableStyle(commands))
         parts: list = []
         if caption:
             self._counters["tbl"] += 1
@@ -469,12 +490,12 @@ class Book:
         y = PAGE_H - 44
         c.setFont("HeadL", 8)
         c.setFillColor(MUTED)
-        title = self.title
+        title = theme.printable(self.title, "HeadL")
         limit = TEXT_W * 0.55
         while stringWidth(title, "HeadL", 8) > limit and len(title) > 4:
             title = title[:-2].rstrip() + "…"
         c.drawString(ML, y, title)
-        chapter = doc.chapter_name
+        chapter = theme.printable(doc.chapter_name, "HeadM")
         if chapter:
             while stringWidth(chapter, "HeadM", 8) > TEXT_W * 0.4 and len(chapter) > 4:
                 chapter = chapter[:-2].rstrip() + "…"

@@ -18,6 +18,7 @@ TAG_ONLY = re.compile(r"^\s*</?[a-zA-Z][^>]*>\s*$")
 CALLOUT = re.compile(r"^\[!([A-Za-z ]+)\]\s*(.*)$")
 BOLD_LEAD = re.compile(r"^\*\*([A-Za-z ]+?)(?::\*\*|\*\*:?)\s*(.*)$")
 MATRIX_ENV = re.compile(r"\\begin\{(?:cases|[pbvBV]?matrix|array)\}")
+MANUAL_NUMBER = re.compile(r"^(?:\d+(?:\.\d+)*[.)]|\d+(?:\.\d+)+)\s+")
 MATH_LANGS = {"math", "latex", "tex", "equation"}
 
 
@@ -303,6 +304,7 @@ class Renderer:
         out = max(1, min(level - self.chapter_level + 1, self.last_out + 1))
         self.last_out = out
         slug = self.slugs[index] if index < len(self.slugs) else ""
+        text = MANUAL_NUMBER.sub("", text)  # numbering is automatic
         if out == 1:
             b.chapter(text, slug=slug)
         elif out == 2:

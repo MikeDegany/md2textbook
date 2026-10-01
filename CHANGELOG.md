@@ -7,7 +7,13 @@ All notable changes to this project are documented here. The format follows [Kee
 ### Added
 - Step-by-step Windows guide for first-time users (`docs/windows-guide.md`).
 
+### Changed
+- Manual heading numbers such as `3. Dates` or `2.1 Detail` are removed, since chapters and sections are numbered automatically.
+- Table columns are never narrower than their longest word, so words are no longer split mid-word.
+- Tables with an empty header row (key/value tables) are drawn without the empty header bar and with bold keys.
+
 ### Fixed
+- Emoji render with a bundled monochrome Noto Emoji font instead of disappearing or showing empty boxes.
 - Links to headings such as `[text](#my-heading)` no longer crash the conversion; they jump to the heading, and links to unknown headings become plain text.
 - Headings inside callout boxes no longer shift heading numbering and anchors.
 - Images that cannot be read now say why (missing file or unreadable format) and print the cause to stderr instead of always reporting "not found".

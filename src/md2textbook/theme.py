@@ -104,6 +104,7 @@ def register_fonts() -> None:
         _register(f"Body{suffix}", f"Caladea-{style}.ttf", fallback)
     _register("Sym", "", sans)
     _register("Sym-B", "", sans_b)
+    _register("Emoji", "NotoEmoji.ttf", "DejaVuSans.ttf")
     _register("Mono", "", "DejaVuSansMono.ttf")
     _register("Mono-B", "", "DejaVuSansMono-Bold.ttf")
     reg = pdfmetrics.registerFontFamily
@@ -124,27 +125,43 @@ def coverage(font: str) -> frozenset[int]:
 PRIVATE = range(0xE000, 0xF900)
 
 
+INVISIBLE = {0xFE0E, 0xFE0F, 0x200D}
+
+
 def wrap_missing_glyphs(text: str, font: str) -> str:
-    have, sym = coverage(font), coverage("Sym")
+    have, sym, emoji = coverage(font), coverage("Sym"), coverage("Emoji")
     out: list[str] = []
-    in_sym = False
+    current: str | None = None
+
+    def switch(target: str | None) -> None:
+        nonlocal current
+        if current:
+            out.append("</font>")
+        if target:
+            out.append(f'<font name="{target}">')
+        current = target
+
     for part in re.split(r"(<[^>]*>)", text):
         if part.startswith("<") and part.endswith(">") and len(part) > 1:
             out.append(part)
             continue
         for ch in part:
             code = ord(ch)
-            needs_sym = code not in have and code in sym and not ch.isspace() and code not in PRIVATE
-            if needs_sym and not in_sym:
-                out.append('<font name="Sym">')
-            elif not needs_sym and in_sym:
-                out.append("</font>")
-            in_sym = needs_sym
+            if code in INVISIBLE:
+                continue
+            target = None
+            if code not in have and not ch.isspace() and code not in PRIVATE and code >= 32:
+                target = "Sym" if code in sym else "Emoji" if code in emoji else None
+            if target != current:
+                switch(target)
             out.append(ch)
-        if in_sym:
-            out.append("</font>")
-            in_sym = False
+        switch(None)
     return "".join(out)
+
+
+def printable(text: str, font: str) -> str:
+    have = coverage(font)
+    return "".join(ch for ch in text if ord(ch) in have or (ch.isspace() and ord(ch) < 128))
 
 
 def xml_escape(text: str) -> str:

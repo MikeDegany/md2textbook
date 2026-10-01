@@ -86,3 +86,35 @@ def test_internal_links_resolve_or_degrade(tmp_path):
 
     kinds = [link["kind"] for page in pymupdf.open(out) for link in page.get_links()]
     assert kinds.count(pymupdf.LINK_GOTO) >= 2  # the two resolvable links, plus TOC entries
+
+
+def outline_titles(pdf: Path) -> list[str]:
+    import pymupdf
+
+    return [entry[1] for entry in pymupdf.open(pdf).get_toc()]
+
+
+def test_manual_heading_numbers_are_stripped(tmp_path):
+    src = tmp_path / "doc.md"
+    src.write_text("# Book\n\n# 3. Dates\n\n## 3.1 Detail\n\n## 2) Other\n\n# Second\n", encoding="utf-8")
+    titles = outline_titles(convert(src, tmp_path / "doc.pdf"))
+    assert titles[0].endswith("Dates") and "3." not in titles[0]
+    assert all("3.1 Detail" not in t and "2)" not in t for t in titles)
+
+
+def test_emoji_use_fallback_font():
+    from md2textbook import theme
+
+    theme.register_fonts()
+    assert '<font name="Emoji">' in theme.wrap_missing_glyphs("Trophy 🏆 time", "Body")
+    assert "️" not in theme.wrap_missing_glyphs("tag \U0001f3f7️", "Body")
+
+
+def test_headerless_table_and_wide_content(tmp_path):
+    src = tmp_path / "doc.md"
+    src.write_text(
+        "# T\n\n## S\n\n| | |\n|---|---|\n| Website | https://example.com/a/very/long/path |\n| Date | Nov 12 |\n\n"
+        "| Notification | Camera-ready |\n|---|---|\n| Oct 1 | Nov 5 |\n",
+        encoding="utf-8",
+    )
+    assert convert(src, tmp_path / "doc.pdf").exists()
