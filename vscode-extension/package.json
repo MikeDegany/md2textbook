@@ -1,0 +1,165 @@
+{
+  "name": "md2textbook",
+  "displayName": "Markdown to Textbook PDF",
+  "description": "Turn the Markdown file you are reading into a textbook-style PDF and open it in your PDF reader, with one click.",
+  "version": "0.1.0",
+  "publisher": "mikedegany",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MikeDegany/md2textbook.git",
+    "directory": "vscode-extension"
+  },
+  "homepage": "https://github.com/MikeDegany/md2textbook/tree/main/vscode-extension#readme",
+  "bugs": {
+    "url": "https://github.com/MikeDegany/md2textbook/issues"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "markdown",
+    "pdf",
+    "textbook",
+    "convert",
+    "export",
+    "report"
+  ],
+  "icon": "media/icon.png",
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onLanguage:markdown"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false,
+      "description": "Converting runs the md2textbook program installed on your computer."
+    },
+    "virtualWorkspaces": {
+      "supported": false,
+      "description": "Converting needs files on a real disk."
+    }
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "md2textbook.convert",
+        "title": "Convert Markdown to PDF",
+        "category": "md2textbook",
+        "icon": "$(file-pdf)"
+      },
+      {
+        "command": "md2textbook.openPdf",
+        "title": "Open Generated PDF",
+        "category": "md2textbook",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "md2textbook.checkInstall",
+        "title": "Check Installation",
+        "category": "md2textbook"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "md2textbook.convert",
+          "when": "resourceLangId == markdown",
+          "group": "navigation@1"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "md2textbook.convert",
+          "when": "resourceLangId == markdown",
+          "group": "z_md2textbook@1"
+        },
+        {
+          "command": "md2textbook.openPdf",
+          "when": "resourceLangId == markdown",
+          "group": "z_md2textbook@2"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "md2textbook.convert",
+          "when": "resourceLangId == markdown",
+          "group": "z_md2textbook@1"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "md2textbook.convert",
+          "when": "editorLangId == markdown"
+        },
+        {
+          "command": "md2textbook.openPdf",
+          "when": "editorLangId == markdown"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "md2textbook.convert",
+        "key": "ctrl+alt+p",
+        "mac": "cmd+alt+p",
+        "when": "editorLangId == markdown"
+      }
+    ],
+    "configuration": {
+      "title": "md2textbook",
+      "properties": {
+        "md2textbook.command": {
+          "type": "string",
+          "default": "md2textbook",
+          "markdownDescription": "Command that runs md2textbook. Leave the default; if it is not found the extension also tries `python -m md2textbook` and `py -m md2textbook`."
+        },
+        "md2textbook.openWith": {
+          "type": "string",
+          "default": "external",
+          "enum": [
+            "external",
+            "vscode",
+            "none"
+          ],
+          "enumDescriptions": [
+            "Open the PDF in your computer's default PDF reader (for example Adobe).",
+            "Open the PDF in a VS Code tab (needs a PDF viewer extension).",
+            "Only create the PDF."
+          ],
+          "description": "Where to open the PDF after converting."
+        },
+        "md2textbook.convertOnSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "Convert a Markdown file to PDF every time it is saved."
+        },
+        "md2textbook.openAfterAutoConvert": {
+          "type": "boolean",
+          "default": false,
+          "description": "Also open the PDF after a convert-on-save conversion."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "bundle": "node esbuild.mjs",
+    "vscode:prepublish": "node esbuild.mjs --production",
+    "test:unit": "node --test \"out/test/unit/*.test.js\"",
+    "test": "npm run compile && npm run test:unit",
+    "test:integration": "npm run compile && npm run bundle && node out/test/runTest.js",
+    "package": "vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/test-electron": "^2.4.1",
+    "@vscode/vsce": "^3.2.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.6.0"
+  }
+}

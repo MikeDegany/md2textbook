@@ -21,6 +21,23 @@ jobs:
       - run: pip install -e ".[dev]"
       - run: pytest
 
+  extension:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: vscode-extension
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: vscode-extension/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run bundle
+      - run: npx vsce package --no-dependencies
+
   build:
     runs-on: ubuntu-latest
     steps:

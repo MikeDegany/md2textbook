@@ -75,6 +75,10 @@ pytest
 | `theme.py` | Fonts, palette, paragraph styles, inline markup |
 | `mathkit.py` | LaTeX to PNG rendering with an on-disk cache |
 
+## VS Code extension
+
+[`vscode-extension/`](vscode-extension) holds a VS Code extension that converts the Markdown file you are reading with one click and opens the PDF in your PDF reader. See its [README](vscode-extension/README.md).
+
 ## Contributing
 
 Issues and pull requests are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).

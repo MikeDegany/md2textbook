@@ -34,3 +34,11 @@ desktop.ini
 
 # Local scratch files
 123.md
+
+# VS Code extension
+node_modules/
+vscode-extension/out/
+vscode-extension/dist/
+vscode-extension/.vscode-test/
+*.vsix
+!vscode-extension/.vscode/
