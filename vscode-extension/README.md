@@ -1,5 +1,7 @@
 # Markdown to Textbook PDF
 
+![Version](https://img.shields.io/visual-studio-marketplace/v/mikedegany.md2textbook) ![Installs](https://img.shields.io/visual-studio-marketplace/i/mikedegany.md2textbook)
+
 Turn long Markdown files (AI-written reports, notes, documentation) into a clean textbook-style PDF with one click, straight from VS Code. The PDF is saved next to the Markdown file, ready to open in whichever PDF reader you like, so you can highlight, comment and search it there.
 
 The conversion is done by [md2textbook](https://github.com/MikeDegany/md2textbook), which runs fully offline: gradient cover, table of contents, colored boxes for callouts, numbered equations, highlighted code, tables and figures.
@@ -8,7 +10,7 @@ The conversion is done by [md2textbook](https://github.com/MikeDegany/md2textboo
 
 ## Quick start
 
-1. Install this extension.
+1. Install this extension: search for **Markdown to Textbook PDF** in the Extensions view (`Ctrl+Shift+X`), or run `code --install-extension mikedegany.md2textbook`. Cursor, VSCodium and similar editors can get it from [Open VSX](https://open-vsx.org/extension/mikedegany/md2textbook).
 2. Open a `.md` file and click the **PDF icon** at the top right of the editor, or press `Ctrl+Alt+P` (`Cmd+Alt+P` on a Mac).
 3. If md2textbook is not installed yet, the extension offers to install it for you (it needs Python 3.10 or newer).
 4. The PDF is saved next to the Markdown file, with the same name and a `.pdf` ending. Nothing is opened for you; if you want that, see `md2textbook.openWith` below.

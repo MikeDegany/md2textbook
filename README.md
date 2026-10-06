@@ -1,5 +1,9 @@
 # md2textbook
 
+[![PyPI](https://img.shields.io/pypi/v/md2textbook)](https://pypi.org/project/md2textbook/)
+[![VS Code extension](https://img.shields.io/visual-studio-marketplace/v/mikedegany.md2textbook?label=VS%20Code)](https://marketplace.visualstudio.com/items?itemName=mikedegany.md2textbook)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
 Turn a Markdown file into a coursebook-style PDF: gradient cover, table of contents, chapter banners, colored boxes, publication-quality equations and syntax-highlighted code. It runs fully offline on Windows, macOS and Linux, with no network access and no AI.
 
 ![Cover, chapter opener and equations](https://raw.githubusercontent.com/MikeDegany/md2textbook/main/docs/images/overview-1.png)
@@ -77,7 +81,13 @@ pytest
 
 ## VS Code extension
 
-[`vscode-extension/`](vscode-extension) holds a VS Code extension that converts the Markdown file you are reading with one click and opens the PDF in your PDF reader. See its [README](vscode-extension/README.md).
+Prefer to stay in your editor? The [Markdown to Textbook PDF](https://marketplace.visualstudio.com/items?itemName=mikedegany.md2textbook) extension converts the Markdown file you are reading with one click and saves the PDF next to it.
+
+- In VS Code, open the Extensions view (`Ctrl+Shift+X`), search for **Markdown to Textbook PDF**, and install it. Or run `code --install-extension mikedegany.md2textbook`.
+- Using Cursor, VSCodium or another editor? It is also on [Open VSX](https://open-vsx.org/extension/mikedegany/md2textbook).
+- The extension runs this tool, so it offers to install `md2textbook` for you the first time.
+
+The source lives in [`vscode-extension/`](vscode-extension); see its [README](vscode-extension/README.md) for commands and settings.
 
 ## Contributing
 
