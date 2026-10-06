@@ -1,6 +1,6 @@
 # Markdown to Textbook PDF
 
-Read long Markdown files (AI-written reports, notes, documentation) as a clean textbook-style PDF, with one click, straight from VS Code. The PDF opens in your normal PDF reader, so you can highlight, comment and search it there.
+Turn long Markdown files (AI-written reports, notes, documentation) into a clean textbook-style PDF with one click, straight from VS Code. The PDF is saved next to the Markdown file, ready to open in whichever PDF reader you like, so you can highlight, comment and search it there.
 
 The conversion is done by [md2textbook](https://github.com/MikeDegany/md2textbook), which runs fully offline: gradient cover, table of contents, colored boxes for callouts, numbered equations, highlighted code, tables and figures.
 
@@ -11,7 +11,7 @@ The conversion is done by [md2textbook](https://github.com/MikeDegany/md2textboo
 1. Install this extension.
 2. Open a `.md` file and click the **PDF icon** at the top right of the editor, or press `Ctrl+Alt+P` (`Cmd+Alt+P` on a Mac).
 3. If md2textbook is not installed yet, the extension offers to install it for you (it needs Python 3.10 or newer).
-4. The PDF is saved next to the Markdown file and opens in your default PDF reader.
+4. The PDF is saved next to the Markdown file, with the same name and a `.pdf` ending. Nothing is opened for you; if you want that, see `md2textbook.openWith` below.
 
 You can also right-click a Markdown file, in the editor or in the Explorer, and choose **Convert Markdown to PDF**.
 
@@ -19,17 +19,17 @@ You can also right-click a Markdown file, in the editor or in the Explorer, and 
 
 | Command | What it does |
 |---|---|
-| **md2textbook: Convert Markdown to PDF** | Converts the open (or right-clicked) Markdown file and opens the PDF |
-| **md2textbook: Open Generated PDF** | Opens the existing PDF without converting again |
+| **md2textbook: Convert Markdown to PDF** | Converts the open (or right-clicked) Markdown file and saves the PDF next to it |
+| **md2textbook: Open Generated PDF** | Opens the existing PDF in your default reader (or a VS Code tab) without converting again |
 | **md2textbook: Check Installation** | Shows which md2textbook it found, or offers to install it |
 
 ## Settings
 
 | Setting | Default | Meaning |
 |---|---|---|
-| `md2textbook.openWith` | `external` | `external` opens your default PDF reader, `vscode` opens a tab in VS Code (needs a PDF viewer extension), `none` only creates the PDF |
+| `md2textbook.openWith` | `none` | `none` only saves the PDF. `external` also opens it in your default PDF reader, `vscode` opens a tab in VS Code (needs a PDF viewer extension) |
 | `md2textbook.convertOnSave` | `false` | Convert every Markdown file when you save it |
-| `md2textbook.openAfterAutoConvert` | `false` | Also open the PDF after a convert-on-save conversion |
+| `md2textbook.openAfterAutoConvert` | `false` | Also open the PDF after a convert-on-save conversion (only if `openWith` is not `none`) |
 | `md2textbook.command` | `md2textbook` | The command to run. If it is not found, `python -m md2textbook` and `py -m md2textbook` are tried too |
 
 ## If the PDF is open in your reader
@@ -38,7 +38,7 @@ Some readers, Adobe on Windows in particular, lock a PDF while it is open, so it
 
 ## Remote windows (SSH, containers, WSL)
 
-The extension runs where your files are, so md2textbook must be installed on that machine, and the PDF is created there. A remote machine cannot start a PDF reader on your computer, so the extension selects the PDF in the Explorer instead: right-click it and choose **Download**.
+The extension runs where your files are, so md2textbook must be installed on that machine, and the PDF is created there, next to the Markdown file. To get it onto your own computer, right-click the PDF in the Explorer and choose **Download**.
 
 ## Troubleshooting
 

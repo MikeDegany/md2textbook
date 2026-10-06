@@ -28,6 +28,13 @@ const cases: TestCase[] = [
     },
   },
   {
+    name: "by default the PDF is only saved, never opened in a reader",
+    async run() {
+      assert.equal(config().inspect<string>("openWith")?.defaultValue, "none");
+      assert.equal(config().inspect<boolean>("openAfterAutoConvert")?.defaultValue, false);
+    },
+  },
+  {
     name: "convert command writes the PDF next to the Markdown file",
     async run() {
       await config().update("openWith", "none", vscode.ConfigurationTarget.Global);

@@ -56,8 +56,7 @@ async function openPdf(pdf: string): Promise<void> {
     );
     return;
   }
-  const mode = settings().get<string>("openWith", "external");
-  if (mode === "vscode") {
+  if (settings().get<string>("openWith", "none") === "vscode") {
     try {
       await vscode.commands.executeCommand("vscode.open", uri);
       return;
@@ -65,19 +64,22 @@ async function openPdf(pdf: string): Promise<void> {
       output.appendLine("No PDF viewer in VS Code; opening the default reader instead.");
     }
   }
-  if (mode === "none") {
-    void vscode.window
-      .showInformationMessage(`PDF ready: ${path.basename(pdf)}`, "Open PDF", "Show in Folder")
-      .then((pick) => {
-        if (pick === "Open PDF") {
-          void vscode.env.openExternal(uri);
-        } else if (pick === "Show in Folder") {
-          void vscode.commands.executeCommand("revealFileInOS", uri);
-        }
-      });
+  await vscode.env.openExternal(uri);
+}
+
+function announceSaved(markdownPath: string, pdf: string, auto: boolean): void {
+  const name = path.basename(pdf);
+  vscode.window.setStatusBarMessage(`$(check) ${name} saved`, 6000);
+  if (auto) {
     return;
   }
-  await vscode.env.openExternal(uri);
+  void vscode.window
+    .showInformationMessage(`Saved ${name} next to ${path.basename(markdownPath)}`, "Show in Folder")
+    .then((pick) => {
+      if (pick) {
+        void vscode.commands.executeCommand("revealFileInOS", vscode.Uri.file(pdf));
+      }
+    });
 }
 
 async function resolveCli(auto: boolean): Promise<Cli | undefined> {
@@ -150,10 +152,11 @@ async function convert(markdownPath: string, auto: boolean): Promise<string | un
       }
       return undefined;
     }
-    if (!auto || settings().get<boolean>("openAfterAutoConvert", false)) {
+    const wantsOpen = auto ? settings().get<boolean>("openAfterAutoConvert", false) : true;
+    if (wantsOpen && settings().get<string>("openWith", "none") !== "none") {
       await openPdf(pdf);
     } else {
-      vscode.window.setStatusBarMessage(`$(check) ${name} updated`, 4000);
+      announceSaved(markdownPath, pdf, auto);
     }
     return pdf;
   } finally {

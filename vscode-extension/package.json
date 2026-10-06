@@ -1,8 +1,8 @@
 {
   "name": "md2textbook",
   "displayName": "Markdown to Textbook PDF",
-  "description": "Turn the Markdown file you are reading into a textbook-style PDF and open it in your PDF reader, with one click.",
-  "version": "0.1.0",
+  "description": "Turn the Markdown file you are reading into a textbook-style PDF, saved next to it, with one click.",
+  "version": "0.1.1",
   "publisher": "mikedegany",
   "license": "MIT",
   "repository": {
@@ -119,18 +119,18 @@
         },
         "md2textbook.openWith": {
           "type": "string",
-          "default": "external",
+          "default": "none",
           "enum": [
+            "none",
             "external",
-            "vscode",
-            "none"
+            "vscode"
           ],
           "enumDescriptions": [
-            "Open the PDF in your computer's default PDF reader (for example Adobe).",
-            "Open the PDF in a VS Code tab (needs a PDF viewer extension).",
-            "Only create the PDF."
+            "Only save the PDF next to the Markdown file; do not open it.",
+            "Also open the PDF in your computer's default PDF reader (for example Adobe).",
+            "Also open the PDF in a VS Code tab (needs a PDF viewer extension)."
           ],
-          "description": "Where to open the PDF after converting."
+          "description": "What to do with the PDF after converting."
         },
         "md2textbook.convertOnSave": {
           "type": "boolean",
@@ -140,7 +140,7 @@
         "md2textbook.openAfterAutoConvert": {
           "type": "boolean",
           "default": false,
-          "description": "Also open the PDF after a convert-on-save conversion."
+          "description": "Also open the PDF after a convert-on-save conversion (only if openWith is not none)."
         }
       }
     }
